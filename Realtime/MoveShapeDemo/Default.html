@@ -38,8 +38,6 @@
                 $shape.animate(shapeModel, { duration: updateRate, queue: false });
             };
             moveShapeHub.client.updateMyId = function (id) {
-                debugger;
-                //$("#shape").id = id;
                 $("#shape").attr("id", id);
             }
             $.connection.hub.start().done(function () {

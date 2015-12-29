@@ -4,7 +4,7 @@
     <title>SignalR MoveShape Demo</title>
     <meta charset="utf-8" />
     <style>
-        #shape {
+        .shape {
             width: 100px;
             height: 100px;
             background-color: #FF0000;
@@ -37,7 +37,15 @@
                 // animation and don't lag behind.
                 $shape.animate(shapeModel, { duration: updateRate, queue: false });
             };
+            moveShapeHub.client.updateMyId = function (id) {
+                debugger;
+                //$("#shape").id = id;
+                $("#shape").attr("id", id);
+            }
             $.connection.hub.start().done(function () {
+                // Try and change the id
+                moveShapeHub.server.getMyId();
+
                 $shape.draggable({
                     drag: function () {
                         shapeModel = $shape.offset();
@@ -57,6 +65,6 @@
         });
     </script>
 
-    <div id="shape" />
+    <div id="shape" class="shape" />
 </body>
 </html>

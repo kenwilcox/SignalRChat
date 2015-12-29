@@ -20,10 +20,13 @@
         $(function () {
             var moveShapeHub = $.connection.moveShapeHub,
                 $shape = $("#shape"),
+                messageFrequency = 10,
+                updateRate = 1000 / messageFrequency,
                 shapeModel = {
                     left: 0,
-                    top: 0,
-                };
+                    top: 0
+                },
+                moved = false;
             moveShapeHub.client.updateShape = function (model) {
                 shapeModel = model;
                 $shape.css({ left: model.left, top: model.top });
@@ -32,10 +35,19 @@
                 $shape.draggable({
                     drag: function () {
                         shapeModel = $shape.offset();
-                        moveShapeHub.server.updateModel(shapeModel);
+                        moved = true;
                     }
                 });
+                // Start the client side server update interval
+                setInterval(updateServerModel, updateRate);
             });
+            function updateServerModel() {
+                // Only update server if we have a new movement
+                if (moved) {
+                    moveShapeHub.server.updateModel(shapeModel);
+                    moved = false;
+                }
+            }
         });
     </script>
 

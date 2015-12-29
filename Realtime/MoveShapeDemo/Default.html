@@ -29,7 +29,13 @@
                 moved = false;
             moveShapeHub.client.updateShape = function (model) {
                 shapeModel = model;
-                $shape.css({ left: model.left, top: model.top });
+                //$shape.css({ left: model.left, top: model.top });
+                // Gradually move the shape towards the new location (interpolate)
+                // The updateRate is used as the duration because by the time
+                // we get to the next location we want to be at the "last" location
+                // We also clear the animation queue so that we start a new
+                // animation and don't lag behind.
+                $shape.animate(shapeModel, { duration: updateRate, queue: false });
             };
             $.connection.hub.start().done(function () {
                 $shape.draggable({

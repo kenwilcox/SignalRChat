@@ -4,6 +4,8 @@ namespace MoveShapeDemo.Models
 {
     public class ShapeModel
     {
+        [JsonProperty("id")]
+        public string Id { get; set; }
         [JsonProperty("left")]
         public double Left { get; set; }
         [JsonProperty("top")]

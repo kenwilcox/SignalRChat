@@ -20,5 +20,11 @@ namespace MoveShapeDemo.Hubs
             clientModel.LastUpdatedBy = Context.ConnectionId;
             _broadcaster.UpdateShape(clientModel);
         }
+
+        public void GetMyId()
+        {
+            var id = Context.ConnectionId.Replace("-", "");
+            Clients.Caller.updateMyId(id);
+        }
     }
 }

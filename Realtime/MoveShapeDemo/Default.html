@@ -9,6 +9,12 @@
             height: 100px;
             background-color: #FF0000;
         }
+
+        .others {
+            width: 100px;
+            height: 100px;
+            background-color: #0000FF;
+        }
     </style>
 </head>
 <body>
@@ -19,13 +25,15 @@
     <script>
         $(function () {
             var moveShapeHub = $.connection.moveShapeHub,
-                $shape = $("#shape"),
-                messageFrequency = 10,
-                updateRate = 1000 / messageFrequency,
-                shapeModel = {
-                    left: 0,
-                    top: 0
-                },
+                myId = "#shape"
+            $shape = $("#shape"),
+            messageFrequency = 10,
+            updateRate = 1000 / messageFrequency,
+            shapeModel = {
+                left: 0,
+                top: 0
+            },
+            creating = false,
                 moved = false;
             moveShapeHub.client.updateShape = function (model) {
                 shapeModel = model;
@@ -35,18 +43,37 @@
                 // we get to the next location we want to be at the "last" location
                 // We also clear the animation queue so that we start a new
                 // animation and don't lag behind.
-                $shape.animate(shapeModel, { duration: updateRate, queue: false });
+                $moveShape = $("#" + shapeModel.id);
+
+                if (!$moveShape.exists()) {
+                    if (!creating) {
+                        creating = true;
+                        $moveShape = $("<div />", {
+                            id: shapeModel.id,
+                            style: "position: relative;"
+                        });
+                        $moveShape.addClass("others");
+                        $moveShape.appendTo('body');
+                    }
+                    creating = false;
+                }
+
+                //$("#" + shapeModel.id).remove();
+                $moveShape.animate(shapeModel, { duration: updateRate, queue: false });
             };
             moveShapeHub.client.updateMyId = function (id) {
+                shapeModel.id = id;
+                myId = id;
                 $("#shape").attr("id", id);
+                $shape = $("#" + id);
             }
             $.connection.hub.start().done(function () {
                 // Try and change the id
                 moveShapeHub.server.getMyId();
-
                 $shape.draggable({
                     drag: function () {
                         shapeModel = $shape.offset();
+                        shapeModel.id = myId;
                         moved = true;
                     }
                 });
@@ -60,9 +87,12 @@
                     moved = false;
                 }
             }
+            $.fn.exists = function () {
+                return this.length !== 0;
+            }
         });
     </script>
 
-    <div id="shape" class="shape" />
+    <div id="shape" class="shape"></div>
 </body>
 </html>
